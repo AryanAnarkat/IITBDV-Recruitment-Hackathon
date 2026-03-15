@@ -1,4 +1,5 @@
 
+
 '''
 PPC Hackathon — Participant Boilerplate
 You must implement two functions: plan() and control()
@@ -11,7 +12,7 @@ You must implement two functions: plan() and control()
 # CmdFeedback: {"throttle", "steer"}        
 
 # ─── PLANNER ──────────────────────────────────────────────────────────────────
-import numpy as np
+import numpy as np # type: ignore
 
 def plan(cones: list[dict]) -> list[dict]:
     """
@@ -34,13 +35,9 @@ def plan(cones: list[dict]) -> list[dict]:
     yellow = np.array([[cone["x"], cone["y"]] for cone in cones if cone["side"] == "right"])
 
     # implement a planning algorithm to generate a path from the blue and yellow cones
-
-
-
-
-
-
-
-
+    for b, y in zip(blue, yellow):
+        x=.48
+        path.append({
+        "x": (x*b[0] + y[0]) / (x+1),
+        "y": (x*b[1] + y[1]) / (x+1)})
     return path
-
