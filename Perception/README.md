@@ -11,4 +11,8 @@ where H is the real-world height of the cone and f is the camera focal length.
 
 ## Results
 
-For each detected cone, the program calculates the distance and displays it on the image. Bounding boxes are drawn around cones, and the estimated distance is annotated above each box. The annotated image is saved as output.jpg, and the distances of all detected cones are prin
+For each detected cone, the program calculates the distance and displays it on the image. Bounding boxes are drawn around cones, and the estimated distance is annotated above each box. The annotated image is saved as output.jpg, and the distances of all detected cones are printed
+## Assumptions
+
+The formula is true
+The cones are assumed to be upright and facing the camera so that the bounding box height accurately represents their apparent size
