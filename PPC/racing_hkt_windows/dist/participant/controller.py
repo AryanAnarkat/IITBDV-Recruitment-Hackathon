@@ -17,31 +17,47 @@ a=0
 b=.3
 heavy=0
 speed=0
+def angle(x1,y1,x2,y2,x3,y3):
+    a1=math.atan2(y2-y1,x2-x1)
+    a2=math.atan2(y2-y3,x2-x3)
+    steer=a2-a1
+    math.atan2(math.sin(steer), math.cos(steer))
+    return steer
 def steering(path: list[dict], state: dict):
     global a
     global b,heavy,speed
     if (path[a]["x"]-state["x"])*(path[a]["x"]-state["x"])+(path[a]["y"]-state["y"])*(path[a]["y"]-state["y"])>(path[a+1]["x"]-state["x"])*(path[a+1]["x"]-state["x"])+(path[a+1]["y"]-state["y"])*(path[a+1]["y"]-state["y"]):
         if a<len(path)-2:
             a=a+1
+            
     length_of_car = 2.6
 # Calculate steering angle based on path and vehicle state
-    angle=math.atan2((path[a+1]["y"]-state["y"]),(path[a+1]["x"]-state["x"]))
+    angl=math.atan2((path[a+1]["y"]-state["y"]),(path[a+1]["x"]-state["x"]))
     # if angle<1.57 and state["yaw"]>4.71:
     #     angle=angle+6.28
-    steer = angle - state["yaw"]
+    steer = angl - state["yaw"]
     steer = math.atan2(math.sin(steer), math.cos(steer))
+    if a<len(path)-4:
+        angl1=math.atan2((path[a+3]["y"]-state["y"]),(path[a+3]["x"]-state["x"]))
+        # if angle<1.57 and state["yaw"]>4.71:
+        #     angle=angle+6.28
+        steer1 = angl1 - state["yaw"]
+        steer1 = math.atan2(math.sin(steer1), math.cos(steer1))
+        steer=(steer+steer1)/2
     b=abs(steer)
     if b>.8:
         heavy=1
     speed=pow(state["vx"]*state["vx"]+state["vy"]*state["vy"],.5)
+    if (a>0 and a<len(path)-2 and (angle(path[a]["x"],path[a]["y"],path[a+1]["x"],path[a+1]["y"],path[a+2]["x"],path[a+2]["y"]))>0.3):
+        steer=steer+.1
 
     # Default steer value
     # 0.5 in the max steering angle in radians (about 28.6 degrees)
-    return np.clip(steer*2, -0.5, 0.5)
+    return np.clip(steer*1.9, -0.5, 0.5)
 
 def throttle_algorithm(target_speed, current_speed, dt):
     global b,speed
-    k=5*(.35-b)
+    k=9*(.4-b)
     if k>0:
         throttle=k*.7+.108
         brake=0
@@ -50,8 +66,8 @@ def throttle_algorithm(target_speed, current_speed, dt):
     else:
         brake=-.1*k
         throttle=0
-        if b>0.6:
-            brake=1    
+        if b>0.16:
+            brake=.08    
     # generate the output for throttle command
     # clip throttle and brake to [0, 1]
     return np.clip(throttle, 0.0, 1.0), np.clip(brake, 0.0, 1.0)
@@ -92,7 +108,6 @@ def control(
     steer = steering(path, state)
     target_speed = 100.0  # m/s, adjust as needed
     global integral
-    throttle, brake = throttle_algorithm(target_speed, state["vx"], 0.05)
+    throttle, brake = throttle_algorithm(target_speed, state["vx"], 0.02)
 
     return throttle, steer, brake
-
