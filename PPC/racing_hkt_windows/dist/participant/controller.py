@@ -15,7 +15,6 @@ You must implement two functions: plan() and control()
 import numpy as np
 a=0
 b=.3
-heavy=0
 speed=0
 def angle(x1,y1,x2,y2,x3,y3):
     a1=math.atan2(y2-y1,x2-x1)
@@ -25,7 +24,7 @@ def angle(x1,y1,x2,y2,x3,y3):
     return steer
 def steering(path: list[dict], state: dict):
     global a
-    global b,heavy,speed
+    global b,speed
     if (path[a]["x"]-state["x"])*(path[a]["x"]-state["x"])+(path[a]["y"]-state["y"])*(path[a]["y"]-state["y"])>(path[a+1]["x"]-state["x"])*(path[a+1]["x"]-state["x"])+(path[a+1]["y"]-state["y"])*(path[a+1]["y"]-state["y"]):
         if a<len(path)-2:
             a=a+1
@@ -45,8 +44,6 @@ def steering(path: list[dict], state: dict):
         steer1 = math.atan2(math.sin(steer1), math.cos(steer1))
         steer=(steer+steer1)/2
     b=abs(steer)
-    if b>.8:
-        heavy=1
     speed=pow(state["vx"]*state["vx"]+state["vy"]*state["vy"],.5)
     if (a>0 and a<len(path)-2 and (angle(path[a]["x"],path[a]["y"],path[a+1]["x"],path[a+1]["y"],path[a+2]["x"],path[a+2]["y"]))>0.3):
         steer=steer+.1
@@ -70,7 +67,7 @@ def throttle_algorithm(target_speed, current_speed, dt):
             brake=.08    
     # generate the output for throttle command
     # clip throttle and brake to [0, 1]
-    return np.clip(throttle, 0.0, 1.0), np.clip(brake, 0.0, 1.0)
+    return np.clip(throttle, 0.0, 1.0), np.clip(0, 0.0, 1.0)
 
 def control(
     path: list[dict],
